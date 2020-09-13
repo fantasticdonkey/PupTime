@@ -35,7 +35,8 @@ Hardware
 
 PupTime currently only uses a number of these, namely the buttons, real-time clock and the LCD screen.
 
-.. image:: docs/M5StickC.jpg
+.. image:: docs/M5StickC.JPG
+	:width: 400
 
 Installation
 ---------------
@@ -47,14 +48,14 @@ Example - Set date and time for the first time
 
 .. code-block:: python
 
-	firstTimeSetup(); // Uncomment this line. Don't forget to re-comment out afterwards, so date / time is not reset.
-	
-	// Change your time values to actual time
-	TimeStruct.Hours = 04;
+    firstTimeSetup(); // Uncomment this line. Don't forget to re-comment it out afterwards, so date / time is not reset after every reboot.
+
+    // Change your time values to actual time
+    TimeStruct.Hours = 04;
     TimeStruct.Minutes = 41;
     TimeStruct.Seconds = 30;
 
-	// Change your date values to actual date
+    // Change your date values to actual date
     DateStruct.WeekDay = 0;
     DateStruct.Month = 8;
     DateStruct.Date = 23;
