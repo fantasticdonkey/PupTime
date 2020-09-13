@@ -114,3 +114,15 @@ Further Documentation
 * `M5StickC <https://m5stack.com/products/stick-c>`_
 * `M5StickC GitHub library <https://github.com/m5stack/M5StickC>`_
 * `image2cpp <https://javl.github.io/image2cpp/>`_
+
+Photos from the Trails
+=========================
+
+.. image:: docs/PupTimeDisplay_1.JPG
+	:scale: 50%
+
+.. image:: docs/PupTimeDisplay_2.JPG
+	:scale: 50%
+
+.. image:: docs/PupTimeDisplay_3.JPG
+	:scale: 50%
