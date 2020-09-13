@@ -15,13 +15,13 @@ The menu button is used to toggle between the screens, and the activity button i
 This Arduino code runs on a `M5StickC <https://m5stack.com/products/stick-c>`_ based on the popular ESP32-PICO microcontroller. It it dependent on the the `M5StickC GitHub library <https://github.com/m5stack/M5StickC>`_. 
 
 .. image:: docs/PupTime.JPG
-	:width: 400
+	:width: 400px
 
 Prerequisites
 ---------------
 
 * Ensure you follow the `Quick Start for the M5StickC <https://docs.m5stack.com/#/en/arduino/arduino_development>`_ page to have a working Arduino environment, with access to the ESP32 and M5StickC libraries.
-* The 80x80 images are stored in the separate :code:`PipTimeBitmaps.h` file. Please see section :ref:`Uploading your own images` for information on using your own images.
+* The 80x80 images are stored in the separate :code:`PipTimeBitmaps.h` file.
 * The :code:`PupTime.ino` is then simply opened in the Arduino IDE and uploaded to the M5StickC through the USB-C connector.
 
 Hardware
@@ -44,7 +44,7 @@ Hardware
 PupTime currently only uses a number of these, namely the buttons, real-time clock and the LCD screen.
 
 .. image:: docs/M5StickC.JPG
-	:width: 400
+	:width: 400px
 
 Installation
 ---------------
