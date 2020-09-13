@@ -12,7 +12,7 @@ This is a simple Arduino sketch; a peculiar attempt at creating a (non-waterproo
 
 The menu button is used to toggle between the screens, and the activity button is used to stop / start specific functionality. The screen also automatically dims after certain duration of inactivity. The red LED flashes only during interval training.
 
-This Arduino code runs on a `M5StickC <https://m5stack.com/products/stick-c>`_ based on the popular ESP32-PICO microcontroller. It it dependent on the the `M5StickC GitHub library <https://github.com/m5stack/M5StickC>`_. 
+This Arduino code runs on a `M5StickC <https://m5stack.com/products/stick-c>`_ based on the popular ESP32-PICO microcontroller. It it dependent on the `M5StickC GitHub library <https://github.com/m5stack/M5StickC>`_. 
 
 .. image:: docs/PupTime.JPG
 	:width: 400px
@@ -29,13 +29,13 @@ Hardware
 
 `M5StickC <https://docs.m5stack.com/#/en/arduino/arduino_development>`_ development boards are equipped with a number of devices and sensors, including:
 
-* ESP32 mictocontroller (240MHz dual core, 520KB SRAM, support for Wi-Fi and Bluetooth)
+* ESP32-PICO micro-controller (240MHz dual core, 520KB SRAM, Wi-Fi and Bluetooth support)
 * Flash memory 4MB
 * 80*160 colour LCD screen (ST7735S)
 * 2 buttons
 * Red LED
 * Motion tracking sensor (MPU6886)
-* Infrared transmittor
+* Infrared transmitter
 * Microphone (SPM1423)
 * Real-time clock (BM8563)
 * Power management (AXP192)
@@ -115,7 +115,7 @@ Further Documentation
 * `M5StickC GitHub library <https://github.com/m5stack/M5StickC>`_
 * `image2cpp <https://javl.github.io/image2cpp/>`_
 
-Photos from the Trails
+Photos
 =========================
 
 .. image:: docs/PupTimeDisplay_1.JPG
