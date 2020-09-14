@@ -245,6 +245,9 @@ void displayScreen2() {
     } else {
       stopWatchTotal = ((millis() - stopWatchLastStart) / 1000) + stopWatchTotal;
       stopWatchRunningStatus = 0;
+      // Force change in text colour if stopped
+      memset(stopWatchDisplayLine1Previous, 0, sizeof(stopWatchDisplayLine1Previous));
+      memset(stopWatchDisplayLine2Previous, 0, sizeof(stopWatchDisplayLine2Previous));
     }
     screenLastActivated = millis();
     M5.Axp.ScreenBreath(10);
@@ -319,11 +322,9 @@ void loop() {
   }
   if (screenCurrentDisplay == 1) {
     displayScreen1();
-  }
-  if (screenCurrentDisplay == 2) {
+  } else if (screenCurrentDisplay == 2) {
     displayScreen2();
-  }
-  if (screenCurrentDisplay == 3) {
+  } else if (screenCurrentDisplay == 3) {
     displayScreen3();
   }
   // Timeout and dim screen if inactive
