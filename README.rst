@@ -23,7 +23,7 @@ Prerequisites
 ---------------
 
 * Ensure you follow the `Quick Start for the M5StickC <https://docs.m5stack.com/#/en/arduino/arduino_development>`_ page to have a working Arduino environment, with access to the ESP32 and M5StickC libraries.
-* The 80x80 images are stored in the separate :code:`PupTimeBitmaps.h` file. Instructions on how to change these are provided below.
+* The 80x80 images are stored in the separate :code:`PupTimeBitmaps1.h` file. Instructions on how to change these are provided below.
 * To run, simply open and upload the :code:`PupTime.ino` file using the Arduino IDE.
 
 Hardware

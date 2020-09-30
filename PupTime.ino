@@ -1,7 +1,7 @@
 #include <string>
 #include <Wire.h>
 #include <M5StickC.h>
-#include "PupTimeBitmaps.h" // Reference to a separate file holding the 80x80 bitmaps
+#include "PupTimeBitmaps3.h"        // Reference to a separate file holding the 80x80 bitmaps
 
 int ledPin = 10;                    // M5StickC GPIO pin of red LED, 0 (LOW) is LED on
 int ledLastChange = 0;              // When the LED was last turned on
@@ -290,7 +290,7 @@ void setup() {
   // firstTimeSetup();
   screenLastActivated = millis();
   M5.Axp.ScreenBreath(10);
-  displayOnScreen(trackerBitmap);
+  displayOnScreen(bitmapDisplay1);
 }
 
 void loop() {
@@ -304,19 +304,19 @@ void loop() {
         // Transition from display 1 to display 2
         memset(watchDisplayLine1Previous, 0, sizeof(watchDisplayLine1Previous));
         memset(watchDisplayLine2Previous, 0, sizeof(watchDisplayLine2Previous));
-        displayOnScreen(zumaBitmap);
+        displayOnScreen(bitmapDisplay2);
         screenCurrentDisplay++;
       } else if (screenCurrentDisplay == 2) {
         // Transition from display 2 to display 3
         memset(stopWatchDisplayLine1Previous, 0, sizeof(stopWatchDisplayLine1Previous));
         memset(stopWatchDisplayLine2Previous, 0, sizeof(stopWatchDisplayLine2Previous));
-        displayOnScreen(rockyBitmap);
+        displayOnScreen(bitmapDisplay3);
         screenCurrentDisplay++;
       } else if (screenCurrentDisplay == 3) {
         // Transition from display 3 back to display 1
         intervalActiveRemainingTimePrevious = -1;
         intervalRestRemainingTimePrevious = -1;
-        displayOnScreen(trackerBitmap);
+        displayOnScreen(bitmapDisplay1);
         screenCurrentDisplay = 1;
       }
     }
