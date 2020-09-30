@@ -1,7 +1,7 @@
 #include <string>
 #include <Wire.h>
 #include <M5StickC.h>
-#include "PupTimeBitmaps3.h"        // Reference to a separate file holding the 80x80 bitmaps
+#include "PupTimeBitmaps1.h"        // Reference to a separate file holding the 80x80 bitmaps (change for different bitmaps)
 
 int ledPin = 10;                    // M5StickC GPIO pin of red LED, 0 (LOW) is LED on
 int ledLastChange = 0;              // When the LED was last turned on
