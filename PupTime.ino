@@ -18,6 +18,7 @@ int buttonLastPressDuration = 1000; // Used to filter multiple button presses (d
 int screenLastActivated = 0;        // Last time screen was re-activated after timeout
 int screenTimeoutDuration = 20000;  // Duration after which screen is dimmed - ms
 int screenCurrentDisplay = 1;       // Current display on the screen (1=clock (default), 2=timer, 3=interval)
+int screenState = 1;                // Screen state (0=standby, 1=on)
 
 RTC_TimeTypeDef RTC_TimeStruct;
 RTC_DateTypeDef RTC_DateStruct;
@@ -55,14 +56,14 @@ int batteryVoltagePercent;    // Current battery voltage, in percentage
 void firstTimeSetup() {
   // Set RTC with current date and time (one-time only)
   RTC_TimeTypeDef TimeStruct;
-  TimeStruct.Hours = 04;          // Change to current value
-  TimeStruct.Minutes = 41;        // Change to current value
+  TimeStruct.Hours = 22;          // Change to current value
+  TimeStruct.Minutes = 24;        // Change to current value
   TimeStruct.Seconds = 30;        // Change to current value
   M5.Rtc.SetTime(&TimeStruct);
   RTC_DateTypeDef DateStruct;
-  DateStruct.WeekDay = 0;         // Change to current value
-  DateStruct.Month = 8;           // Change to current value
-  DateStruct.Date = 23;           // Change to current value
+  DateStruct.WeekDay = 6;         // Change to current value
+  DateStruct.Month = 9;           // Change to current value
+  DateStruct.Date = 26;           // Change to current value
   DateStruct.Year = 2020;         // Change to current value
   M5.Rtc.SetData(&DateStruct);
 }
@@ -286,7 +287,7 @@ void setup() {
   M5.Lcd.setTextSize(2);
   // Only include the following code when setting up the time initially
   // and adjust to actual date and time during first run.
-  //firstTimeSetup();
+  // firstTimeSetup();
   screenLastActivated = millis();
   M5.Axp.ScreenBreath(10);
   displayOnScreen(trackerBitmap);
@@ -298,27 +299,30 @@ void loop() {
   // Check if menu button is pressed, and cycle through displays
   if ((buttonMenuStatus == LOW) && ((millis() - buttonLastPress) > buttonLastPressDuration)) {
     buttonLastPress = millis();
-    if (screenCurrentDisplay == 1) {
-      // Transition from display 1 to display 2
-      memset(watchDisplayLine1Previous, 0, sizeof(watchDisplayLine1Previous));
-      memset(watchDisplayLine2Previous, 0, sizeof(watchDisplayLine2Previous));
-      displayOnScreen(zumaBitmap);
-      screenCurrentDisplay++;
-    } else if (screenCurrentDisplay == 2) {
-      // Transition from display 2 to display 3
-      memset(stopWatchDisplayLine1Previous, 0, sizeof(stopWatchDisplayLine1Previous));
-      memset(stopWatchDisplayLine2Previous, 0, sizeof(stopWatchDisplayLine2Previous));
-      displayOnScreen(rockyBitmap);
-      screenCurrentDisplay++;
-    } else if (screenCurrentDisplay == 3) {
-      // Transition from display 3 back to display 1
-      intervalActiveRemainingTimePrevious = -1;
-      intervalRestRemainingTimePrevious = -1;
-      displayOnScreen(trackerBitmap);
-      screenCurrentDisplay = 1;
+    if (screenState == 1) {
+      if (screenCurrentDisplay == 1) {
+        // Transition from display 1 to display 2
+        memset(watchDisplayLine1Previous, 0, sizeof(watchDisplayLine1Previous));
+        memset(watchDisplayLine2Previous, 0, sizeof(watchDisplayLine2Previous));
+        displayOnScreen(zumaBitmap);
+        screenCurrentDisplay++;
+      } else if (screenCurrentDisplay == 2) {
+        // Transition from display 2 to display 3
+        memset(stopWatchDisplayLine1Previous, 0, sizeof(stopWatchDisplayLine1Previous));
+        memset(stopWatchDisplayLine2Previous, 0, sizeof(stopWatchDisplayLine2Previous));
+        displayOnScreen(rockyBitmap);
+        screenCurrentDisplay++;
+      } else if (screenCurrentDisplay == 3) {
+        // Transition from display 3 back to display 1
+        intervalActiveRemainingTimePrevious = -1;
+        intervalRestRemainingTimePrevious = -1;
+        displayOnScreen(trackerBitmap);
+        screenCurrentDisplay = 1;
+      }
     }
     screenLastActivated = millis();
     M5.Axp.ScreenBreath(10);
+    screenState = 1;
   }
   if (screenCurrentDisplay == 1) {
     displayScreen1();
@@ -329,6 +333,7 @@ void loop() {
   }
   // Timeout and dim screen if inactive
   if ((millis() - screenLastActivated) > screenTimeoutDuration) {
+    screenState = 0;
     M5.Axp.ScreenBreath(7);
   }
   // If interval training, track current countdowns
