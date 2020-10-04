@@ -17,7 +17,7 @@ int buttonLastPressDuration = 1000; // Used to filter multiple button presses (d
 
 int screenLastActivated = 0;        // Last time screen was re-activated after timeout
 int screenTimeoutDuration = 20000;  // Duration after which screen is dimmed - ms
-int screenCurrentDisplay = 1;       // Current display on the screen (1=clock (default), 2=timer, 3=interval)
+int screenCurrentDisplay = 1;       // Current display on the screen (1=clock (default), 2=timer, 3=interval, 4=MPU)
 int screenState = 1;                // Screen state (0=standby, 1=on)
 
 RTC_TimeTypeDef RTC_TimeStruct;
@@ -50,6 +50,21 @@ int intervalActiveRemainingTime = intervalActiveDuration; // Remaining time of t
 int intervalActiveRemainingTimePrevious;                  // Previous remaining time of the active phase (info used for screen refresh) - s
 int intervalActiveLastStart = 0;                          // Time active phase started
 
+float accelerometerX = 0;       // Accelerometer x
+float accelerometerY = 0;       // Accelerometer y
+float accelerometerZ = 0;       // Accelerometer z
+int accelerometerXPixels = 0;   // Accelerometer x (in screen pixels)
+int accelerometerYPixels = 0;   // Accelerometer y (in screen pixels)
+int accelerometerZPixels = 0;   // Accelerometer z (in screen pixels)
+float gyroscopeX = 0;           // Gyroscope x
+float gyroscopeY = 0;           // Gyroscope y
+float gyroscopeZ = 0;           // Gyroscope z
+float gyroscopeXPixels = 0;     // Gyroscope x (in screen pixels)
+float gyroscopeYPixels = 0;     // Gyroscope y (in screen pixels)
+float gyroscopeZPixels = 0;     // Gyroscope z (in screen pixels)
+
+int mpuDisplayStatus = 0;   // Display accelerometer (0) or gyroscope (1) readings
+
 float batteryVoltage;         // Current battery voltage
 int batteryVoltagePercent;    // Current battery voltage, in percentage
 
@@ -57,13 +72,13 @@ void firstTimeSetup() {
   // Set RTC with current date and time (one-time only)
   RTC_TimeTypeDef TimeStruct;
   TimeStruct.Hours = 22;          // Change to current value
-  TimeStruct.Minutes = 24;        // Change to current value
+  TimeStruct.Minutes = 47;        // Change to current value
   TimeStruct.Seconds = 30;        // Change to current value
   M5.Rtc.SetTime(&TimeStruct);
   RTC_DateTypeDef DateStruct;
-  DateStruct.WeekDay = 6;         // Change to current value
-  DateStruct.Month = 9;           // Change to current value
-  DateStruct.Date = 26;           // Change to current value
+  DateStruct.WeekDay = 7;         // Change to current value
+  DateStruct.Month = 10;           // Change to current value
+  DateStruct.Date = 4;           // Change to current value
   DateStruct.Year = 2020;         // Change to current value
   M5.Rtc.SetData(&DateStruct);
 }
@@ -176,6 +191,84 @@ void displayInterval() {
   intervalRestRemainingTimePrevious = intervalRestRemainingTime;
 }
 
+void displayMPU() {
+  // Display MPU readings on display 4
+  M5.Lcd.fillRect(91, 25, 69, 55, BLACK);
+  if (mpuDisplayStatus == 0) {
+    M5.MPU6886.getAccelData(&accelerometerX, &accelerometerY, &accelerometerZ);
+    // Scale values to fit space (scaled to +/- 1200)
+    accelerometerXPixels = (int) (accelerometerX * 1000 * 35 / 1200);
+    if (accelerometerXPixels > 35) {
+      accelerometerXPixels = 35;
+    } else if (accelerometerXPixels < -35) {
+      accelerometerXPixels = -35;
+    }
+    accelerometerYPixels = (int) (accelerometerY * 1000 * 35 / 1200);
+    if (accelerometerYPixels > 35) {
+      accelerometerYPixels = 35;
+    } else if (accelerometerYPixels < -35) {
+      accelerometerYPixels = -35;
+    }
+    accelerometerZPixels = (int) (accelerometerZ * 1000 * 35 / 1200);
+    if (accelerometerZPixels > 35) {
+      accelerometerZPixels = 35;
+    } else if (accelerometerZPixels < -35) {
+      accelerometerZPixels = -35;
+    }
+    if (accelerometerXPixels > 0) {
+      M5.Lcd.fillRect(127, 25, accelerometerXPixels, 13, RED);
+    } else {
+      M5.Lcd.fillRect(127 + accelerometerXPixels, 25, -accelerometerXPixels, 13, RED);
+    }
+    if (accelerometerYPixels > 0) {
+      M5.Lcd.fillRect(127, 40, accelerometerYPixels, 13, ORANGE);
+    } else {
+      M5.Lcd.fillRect(127 + accelerometerYPixels, 40, -accelerometerYPixels, 13, ORANGE);
+    }
+    if (accelerometerZPixels > 0) {
+      M5.Lcd.fillRect(127, 55, accelerometerZPixels, 13, GREEN);
+    } else {
+      M5.Lcd.fillRect(127 + accelerometerZPixels, 55, -accelerometerZPixels, 13, GREEN);
+    }
+  } else if (mpuDisplayStatus == 1) {
+    M5.MPU6886.getGyroData(&gyroscopeX, &gyroscopeY, &gyroscopeZ);
+    // Scale values to fit space (scaled to +/- 1200)
+    gyroscopeXPixels = (int) (gyroscopeX * 35 / 1200);
+    if (gyroscopeXPixels > 35) {
+      gyroscopeXPixels = 35;
+    } else if (gyroscopeXPixels < -35) {
+      gyroscopeXPixels = -35;
+    }
+    gyroscopeYPixels = (int) (gyroscopeY * 35 / 1200);
+    if (gyroscopeYPixels > 35) {
+      gyroscopeYPixels = 35;
+    } else if (gyroscopeYPixels < -35) {
+      gyroscopeYPixels = -35;
+    }
+    gyroscopeZPixels = (int) (gyroscopeZ * 35 / 1200);
+    if (gyroscopeZPixels > 35) {
+      gyroscopeZPixels = 35;
+    } else if (gyroscopeZPixels < -35) {
+      gyroscopeZPixels = -35;
+    }
+    if (gyroscopeXPixels > 0) {
+      M5.Lcd.fillRect(127, 25, gyroscopeXPixels, 13, RED);
+    } else {
+      M5.Lcd.fillRect(127 + gyroscopeXPixels, 25, -gyroscopeXPixels, 13, RED);
+    }
+    if (gyroscopeYPixels > 0) {
+      M5.Lcd.fillRect(127, 40, gyroscopeYPixels, 13, ORANGE);
+    } else {
+      M5.Lcd.fillRect(127 + gyroscopeYPixels, 40, -gyroscopeYPixels, 13, ORANGE);
+    }
+    if (gyroscopeZPixels > 0) {
+      M5.Lcd.fillRect(127, 55, gyroscopeZPixels, 13, GREEN);
+    } else {
+      M5.Lcd.fillRect(127 + gyroscopeZPixels, 55, -gyroscopeZPixels, 13, GREEN);
+    }
+  }
+}
+
 void calculateInterval() {
   // If interval training is running, track the phase it is in, and remaining time
   if (intervalRunningStatus >= 1) {
@@ -276,6 +369,24 @@ void displayScreen3() {
   }
 }
 
+void displayScreen4() {
+  // Display MPU screen
+  displayBattery();
+  displayWiFi();  // TODO: Currently always shows Wi-Fi as connected
+  displayMPU();
+  buttonActionStatus = digitalRead(buttonActionPin);
+  if ((buttonActionStatus == LOW) && ((millis() - buttonLastPress) > buttonLastPressDuration)) {
+    buttonLastPress = millis();
+    if (mpuDisplayStatus == 0) {
+      mpuDisplayStatus = 1;
+    } else if (mpuDisplayStatus == 1) {
+      mpuDisplayStatus = 0;
+    } 
+    screenLastActivated = millis();
+    M5.Axp.ScreenBreath(10);
+  }
+}
+
 void setup() {
   // One-time setup
   pinMode(ledPin, OUTPUT);
@@ -291,6 +402,8 @@ void setup() {
   screenLastActivated = millis();
   M5.Axp.ScreenBreath(10);
   displayOnScreen(bitmapDisplay1);
+  // Initialise IMU
+  M5.MPU6886.Init();
 }
 
 void loop() {
@@ -313,7 +426,24 @@ void loop() {
         displayOnScreen(bitmapDisplay3);
         screenCurrentDisplay++;
       } else if (screenCurrentDisplay == 3) {
-        // Transition from display 3 back to display 1
+        // Transition from display 3 to display 4
+        intervalActiveRemainingTimePrevious = -1;
+        intervalRestRemainingTimePrevious = -1;
+        displayOnScreen(bitmapDisplay4);
+        screenCurrentDisplay++;
+        // Clear the screen and ready for MPU display
+        M5.Lcd.fillRect(81, 25, 79, 55, BLACK);
+        M5.Lcd.setCursor(81, 25);
+        M5.Lcd.setTextColor(RED);
+        M5.Lcd.printf("X:");
+        M5.Lcd.setCursor(81, 40);
+        M5.Lcd.setTextColor(ORANGE);
+        M5.Lcd.printf("Y:");
+        M5.Lcd.setCursor(81, 55);
+        M5.Lcd.setTextColor(GREEN);
+        M5.Lcd.printf("Z:");
+      } else if (screenCurrentDisplay == 4) {
+        // Transition from display 4 back to display 1
         intervalActiveRemainingTimePrevious = -1;
         intervalRestRemainingTimePrevious = -1;
         displayOnScreen(bitmapDisplay1);
@@ -330,6 +460,8 @@ void loop() {
     displayScreen2();
   } else if (screenCurrentDisplay == 3) {
     displayScreen3();
+  } else if (screenCurrentDisplay == 4) {
+    displayScreen4();
   }
   // Timeout and dim screen if inactive
   if ((millis() - screenLastActivated) > screenTimeoutDuration) {
