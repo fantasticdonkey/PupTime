@@ -11,8 +11,11 @@ Currently, the watch has the following screens:
 * Watch
 * Stop-watch
 * Interval training
+* MPU display (accelerometer & gyroscope)
 
-The menu button is used to toggle between the screens, and the activity button is used to stop / start operations on a screen. The display automatically dims after certain duration of inactivity. The red LED flashes during interval training.
+The menu button is used to toggle between the screens, and the activity button is used to stop / start operations on a screen. Action button also toggles between accelerometer and gyroscope readings of the MPU in the MPU display.
+
+The display automatically dims after certain duration of inactivity. The red LED flashes during interval training.
 
 This Arduino code runs on a `M5StickC <https://m5stack.com/products/stick-c>`_ based on the popular ESP32-PICO microcontroller. It it dependent on the `M5StickC GitHub library <https://github.com/m5stack/M5StickC>`_. 
 
@@ -23,7 +26,7 @@ Prerequisites
 ---------------
 
 * Ensure you follow the `Quick Start for the M5StickC <https://docs.m5stack.com/#/en/arduino/arduino_development>`_ page to have a working Arduino environment, with access to the ESP32 and M5StickC libraries.
-* The 80x80 images are stored in the separate :code:`PupTimeBitmaps1.h` file. Instructions on how to change these are provided below.
+* The 80x80 images are stored in the separate :code:`PupTimeBitmaps1.h` file. Instructions on how to change these are provided below. Additional bitmaps are provided, which can be used by changing the number.
 * To run, simply open and upload the :code:`PupTime.ino` file using the Arduino IDE.
 
 Hardware
@@ -43,7 +46,7 @@ Hardware
 * Power management (AXP192)
 * Built-in rechargeable LiPo battery (95 mAh)
 
-PupTime currently only uses a number of these, namely the buttons, real-time clock, red LED and the LCD screen.
+PupTime currently only uses a number of these, namely the buttons, real-time clock, red LED, MPU and the LCD screen.
 
 .. image:: docs/M5StickC.JPG
 	:width: 400px
