@@ -3,22 +3,22 @@
 #include <M5StickC.h>
 #include "PupTimeBitmaps1.h"        // Reference to a separate file holding the 80x80 bitmaps (change for different bitmaps)
 
-int ledPin = 10;                    // M5StickC GPIO pin of red LED, 0 (LOW) is LED on
+unsigned char ledPin = 10;          // M5StickC GPIO pin of red LED, 0 (LOW) is LED on
 int ledLastChange = 0;              // When the LED was last turned on
-int ledStatus = 0;                  // LED on or off (0=off, 1=on)
+bool ledStatus = false;             // LED on or off (false=off, true=on)
 int ledChangeDuration = 1000;       // Duration the LED should be on and off for during standby - ms
 
-int buttonMenuPin = 37;             // M5StickC GPIO pin of button 1
+unsigned char buttonMenuPin = 37;   // M5StickC GPIO pin of button 1
 int buttonMenuStatus = 1;           // 0 (LOW) is pressed
-int buttonActionPin = 39;           // M5StickC GPIO pin of button 1
+unsigned char buttonActionPin = 39; // M5StickC GPIO pin of button 1
 int buttonActionStatus = 1;         // 0 (LOW) is pressed
 int buttonLastPress = 0;            // Last time any button was pressed
 int buttonLastPressDuration = 1000; // Used to filter multiple button presses (de-bouncing) - ms
 
-int screenLastActivated = 0;        // Last time screen was re-activated after timeout
-int screenTimeoutDuration = 20000;  // Duration after which screen is dimmed - ms
-int screenCurrentDisplay = 1;       // Current display on the screen (1=clock (default), 2=timer, 3=interval, 4=MPU)
-int screenState = 1;                // Screen state (0=standby, 1=on)
+int screenLastActivated = 0;                  // Last time screen was re-activated after timeout
+int screenTimeoutDuration = 20000;            // Duration after which screen is dimmed - ms
+unsigned char screenCurrentDisplay = 1;       // Current display on the screen (1=clock (default), 2=timer, 3=interval, 4=MPU)
+bool screenState = true;                      // Screen state (false=standby, true=on)
 
 RTC_TimeTypeDef RTC_TimeStruct;
 RTC_DateTypeDef RTC_DateStruct;
@@ -28,7 +28,7 @@ char watchDisplayLine1Previous[16];       // Previous line 1 of watch screen (us
 char watchDisplayLine2Now[16];            // Current line 2 of watch screen
 char watchDisplayLine2Previous[16];       // Previous line 2 of watch screen (used to determine if refresh is required)
 
-int stopWatchRunningStatus = 0;           // 0 if stopwatch is stopped, 1 if running
+bool stopWatchRunningStatus = false;      // Stopwatch false if stopped, true if running
 int stopWatchLastStart = 0;               // Last time stopwatch was started
 int stopWatchTotal = 0;                   // Total time on stopwatch
 int stopWatchTotalDisplay = 0;            // Total time to be displayed on stopwatch
@@ -40,7 +40,7 @@ char stopWatchDisplayLine1Previous[16];   // Previous line 1 of stop watch scree
 char stopWatchDisplayLine2Now[16];        // Current line 2 of stop watch screen
 char stopWatchDisplayLine2Previous[16];   // Previous line 2 of stop watch screen (used to determine if refresh is required)
 
-int intervalRunningStatus = 0;                            // Phase of the interval training (0=stopped, 1=rest, 2=active)
+unsigned char intervalRunningStatus = 0;                  // Phase of the interval training (0=stopped, 1=rest, 2=active)
 int intervalRestDuration = 120;                           // Duration the rest phase lasts for - s
 int intervalRestRemainingTime = intervalRestDuration;     // Remaining time of the rest phase - s
 int intervalRestRemainingTimePrevious;                    // Previous remaining time of the rest phase (info used for screen refresh) - s
@@ -141,7 +141,7 @@ void displayDateTime() {
 
 void displayStopWatch() {
   // Display stopwatch on display 2
-  if (stopWatchRunningStatus == 0) {
+  if (stopWatchRunningStatus == false) {
     stopWatchTotalDisplay = stopWatchTotal;
   } else {
     stopWatchTotalDisplay = ((millis() - stopWatchLastStart) / 1000 + stopWatchTotal);
@@ -154,7 +154,7 @@ void displayStopWatch() {
   // Only refresh screen if stop watch values have changed
   if ((strcmp(stopWatchDisplayLine1Previous, stopWatchDisplayLine1Now) != 0) || (strcmp(stopWatchDisplayLine2Previous, stopWatchDisplayLine2Now) != 0)){
     M5.Lcd.fillRect(81, 25, 79, 55, BLACK);
-    if (stopWatchRunningStatus == 0) {
+    if (stopWatchRunningStatus == false) {
       M5.Lcd.setTextColor(RED);
     } else {
       M5.Lcd.setTextColor(GREEN);
@@ -195,7 +195,6 @@ void displayMPU() {
   // Display MPU readings on display 4
   M5.Lcd.fillRect(91, 25, 69, 55, BLACK);
   if (mpuDisplayStatus == 0) {
-    M5.MPU6886.getAccelData(&accelerometerX, &accelerometerY, &accelerometerZ);
     // Scale values to fit space (scaled to +/- 1200)
     accelerometerXPixels = (int) (accelerometerX * 1000 * 35 / 1200);
     if (accelerometerXPixels > 35) {
@@ -231,7 +230,6 @@ void displayMPU() {
       M5.Lcd.fillRect(127 + accelerometerZPixels, 55, -accelerometerZPixels, 13, GREEN);
     }
   } else if (mpuDisplayStatus == 1) {
-    M5.MPU6886.getGyroData(&gyroscopeX, &gyroscopeY, &gyroscopeZ);
     // Scale values to fit space (scaled to +/- 1200)
     gyroscopeXPixels = (int) (gyroscopeX * 35 / 1200);
     if (gyroscopeXPixels > 35) {
@@ -291,23 +289,28 @@ void calculateInterval() {
   }
 }
 
+void calculateMPU() {
+  M5.MPU6886.getAccelData(&accelerometerX, &accelerometerY, &accelerometerZ);
+  M5.MPU6886.getGyroData(&gyroscopeX, &gyroscopeY, &gyroscopeZ);
+}
+
 void changeLED() {
   // Alternate the LED on and off if interval training
   if (intervalRunningStatus > 0) {
     if ((millis() - ledLastChange) > ledChangeDuration) {
-      if (ledStatus == 0) {
+      if (ledStatus == false) {
         digitalWrite(ledPin, LOW);
-        ledStatus = 1;
-      } else if (ledStatus == 1) {
+        ledStatus = true;
+      } else if (ledStatus == true) {
         digitalWrite(ledPin, HIGH);
-        ledStatus = 0;
+        ledStatus = false;
       }
       ledLastChange = millis();
     }
   } else {
-    if (ledStatus == 1) {
+    if (ledStatus == true) {
       digitalWrite(ledPin, HIGH);
-      ledStatus = 0;
+      ledStatus = false;
     }
   }
 }
@@ -333,12 +336,12 @@ void displayScreen2() {
   buttonActionStatus = digitalRead(buttonActionPin);
   if ((buttonActionStatus == LOW) && ((millis() - buttonLastPress) > buttonLastPressDuration)) {
     buttonLastPress = millis();
-    if (stopWatchRunningStatus == 0) {
+    if (stopWatchRunningStatus == false) {
       stopWatchLastStart = millis();
-      stopWatchRunningStatus = 1;
+      stopWatchRunningStatus = true;
     } else {
       stopWatchTotal = ((millis() - stopWatchLastStart) / 1000) + stopWatchTotal;
-      stopWatchRunningStatus = 0;
+      stopWatchRunningStatus = false;
       // Force change in text colour if stopped
       memset(stopWatchDisplayLine1Previous, 0, sizeof(stopWatchDisplayLine1Previous));
       memset(stopWatchDisplayLine2Previous, 0, sizeof(stopWatchDisplayLine2Previous));
@@ -412,7 +415,7 @@ void loop() {
   // Check if menu button is pressed, and cycle through displays
   if ((buttonMenuStatus == LOW) && ((millis() - buttonLastPress) > buttonLastPressDuration)) {
     buttonLastPress = millis();
-    if (screenState == 1) {
+    if (screenState == true) {
       if (screenCurrentDisplay == 1) {
         // Transition from display 1 to display 2
         memset(watchDisplayLine1Previous, 0, sizeof(watchDisplayLine1Previous));
@@ -452,7 +455,7 @@ void loop() {
     }
     screenLastActivated = millis();
     M5.Axp.ScreenBreath(10);
-    screenState = 1;
+    screenState = true;
   }
   if (screenCurrentDisplay == 1) {
     displayScreen1();
@@ -465,11 +468,12 @@ void loop() {
   }
   // Timeout and dim screen if inactive
   if ((millis() - screenLastActivated) > screenTimeoutDuration) {
-    screenState = 0;
+    screenState = false;
     M5.Axp.ScreenBreath(7);
   }
   // If interval training, track current countdowns
   calculateInterval();
+  calculateMPU();
   changeLED();
   delay(5);
 }

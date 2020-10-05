@@ -13,9 +13,14 @@ Currently, the watch has the following screens:
 * Interval training
 * MPU display (accelerometer & gyroscope)
 
-The menu button is used to toggle between the screens, and the activity button is used to stop / start operations on a screen. Action button also toggles between accelerometer and gyroscope readings of the MPU in the MPU display.
+The menu button is used to toggle between the screens, and the action button is used to undertake specific operations on a screen. The action button currently performs the following:
 
-The display automatically dims after certain duration of inactivity. The red LED flashes during interval training.
+* Watch: N/A
+* Stop-watch: Stops and starts the stop-watch
+* Interval training: Stops and restarts the timers
+* MPU display (accelerometer & gyroscope): Toggles between accelerometer and gyroscope readings
+
+The display automatically dims after certain duration of inactivity and can be awakened by pressing any button. The red LED flashes during active interval training.
 
 This Arduino code runs on a `M5StickC <https://m5stack.com/products/stick-c>`_ based on the popular ESP32-PICO microcontroller. It it dependent on the `M5StickC GitHub library <https://github.com/m5stack/M5StickC>`_. 
 
@@ -126,8 +131,19 @@ Photos
 .. image:: docs/PupTimeDisplay_1.JPG
 	:scale: 50%
 
+	Display 1
+
 .. image:: docs/PupTimeDisplay_2.JPG
 	:scale: 50%
 
+	Display 2
+
 .. image:: docs/PupTimeDisplay_3.JPG
 	:scale: 50%
+
+	Display 3
+
+.. image:: docs/PupTimeDisplay_4.JPG
+	:scale: 50%
+
+	Display 4
