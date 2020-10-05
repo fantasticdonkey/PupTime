@@ -131,19 +131,11 @@ Photos
 .. image:: docs/PupTimeDisplay_1.JPG
     :scale: 50%
 
-    Display 1
-
 .. image:: docs/PupTimeDisplay_2.JPG
     :scale: 50%
-
-    Display 2
 
 .. image:: docs/PupTimeDisplay_3.JPG
     :scale: 50%
 
-    Display 3
-
 .. image:: docs/PupTimeDisplay_4.JPG
     :scale: 50%
-
-    Display 4
